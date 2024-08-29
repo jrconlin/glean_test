@@ -1,0 +1,166 @@
+---
+# Schema
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+$tags:
+  - "backend"
+
+# Category
+autotrack.fafo:
+
+  # Name (I am using the type as the name because I'm lazy. The linter complains if all
+  # of the various metrics begin with the same string.)
+# NOTE: 'event' types generate broken Rust code. See
+#  event:
+#    # Metric Parameters
+#    type: "event"
+#    description: >
+#      Look, they did a thing!
+#    metadata:
+#      tags:
+#        - "test"
+#    expires: "never"
+#    # supposedly optional values:
+#    bugs:
+#      - "https://evilonastick.com/bugs/"
+#    data_reviews:
+#      - "https://evilonastick.com/reviews/"
+#    notification_emails:
+#      - "alert+ignore@evilonastick.com"
+
+  labeled_bool:
+    type: "labeled_boolean"
+    description: |
+      One of a set of booleans that are identified by a max 71 character label
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    labels:
+      - "some_label" # max of 100 static labels XOR 16 "dynamic" lables.
+      - "other_label"
+      # undefined labels are recorded as "__other__"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - https://evilonastick.com/reviews/
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  count:
+    type: "counter"
+    description: >
+      a singular incrementing count value up to i32::max()
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  labeled:
+    type: "labeled_counter"
+    description: >
+      One of a set of incrementing counts identified by a max 71 char label up to i32::max()
+    labels:
+      - "some_label" # max of 100 static labels XOR 16 "dynamic" lables.
+      - "other_label"
+      # undefined labels are recorded as "__other__"
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  string:
+    type: "string"
+    description: >
+      max 255 octet string value (Use `text` if this is too small)
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  labeled_string:
+    type: "labeled_string"
+    description: >
+      max 100 octet string with max 71 char dynamic (<16#) or static (<100#) labels
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  timespan:
+    type: "timespan"  # see https://mozilla.github.io/glean/book/reference/metrics/timespan.html
+    description: >
+      A short period of time recorded by calls to the object
+    time_unit: millisecond
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  client_id:
+    type: "uuid"
+    description: >
+      A unique UUID based identifier (usually the client ID)
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  datetime:
+    type: "datetime"
+    description: >
+      Record a specific date
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+
+# unused counter types:
+#
+# boolean -- https://mozilla.github.io/glean/book/reference/metrics/boolean.html
+#   labeled_boolean -- https://mozilla.github.io/glean/book/reference/metrics/labeled_booleans.html
+# custom_distribution -- https://mozilla.github.io/glean/book/reference/metrics/custom_distribution.html
+#   labeled_custom_distribution -- https://mozilla.github.io/glean/book/reference/metrics/labeled_custom_distributions.html
+# object -- recorded structured data https://mozilla.github.io/glean/book/reference/metrics/object.html
+# memory_distribution -- https://mozilla.github.io/glean/book/reference/metrics/memory_distribution.html
+#   labeled_memory_distribution -- https://mozilla.github.io/glean/book/reference/metrics/labeled_memory_distributions.html
+# quantity -- single sum of value https://mozilla.github.io/glean/book/reference/metrics/quantity.html
+# rate -- single sum comparative (Note "External Denominator field") https://mozilla.github.io/glean/book/reference/metrics/rate.html
+# string_list -- set of strings https://mozilla.github.io/glean/book/reference/metrics/string_list.html
+# text -- max 200K octet value https://mozilla.github.io/glean/book/reference/metrics/text.html
+# timing_distribution -- https://mozilla.github.io/glean/book/reference/metrics/timing_distribution.html
+#   labeled_timing_distribution -- https://mozilla.github.io/glean/book/reference/metrics/labeled_timing_distributions.html
+# url - https://mozilla.github.io/glean/book/reference/metrics/url.html
+#
+#

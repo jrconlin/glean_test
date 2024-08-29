@@ -1,0 +1,11 @@
+# Schema
+$schema: moz://mozilla.org/schemas/glean/tags/1-0-0
+
+# Tags must be defined here and include a description.
+# These tags are then used in metrics.yaml for whatever tagging reasons.
+
+test:
+  description: "Testy tag is testy"
+
+backend:
+  description: "All the backend stuff"

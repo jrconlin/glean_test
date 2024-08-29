@@ -1,0 +1,2 @@
+# required for `cargo build` and `glean_parser`
+glean_parser
