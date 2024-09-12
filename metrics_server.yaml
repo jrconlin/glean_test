@@ -1,0 +1,124 @@
+## This file describes the "server" metrics. It's used along with
+## `pings.yaml`
+## This defines the various allowed metrics that are to be captured.
+## Each metric is written as a JSON blob to the default logger output.
+
+---
+# Schema
+$schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
+
+$tags:
+  - "backend"
+
+# Category
+autotrack:
+
+  # Name (I am using the type as the name because I'm lazy. The linter complains if all
+  # of the various metrics begin with the same string.)
+  # This would generate a logging function containing the category and name
+  # (e.g. `autotrack_event`, that takes the UA string, IP address (remote? local?), and
+  # the various `string` and `quantity` fields listed below.
+  # I believe you can only define one "event" which contains all the string/quantity fields
+  # defined.
+  some_event:
+    # Metric Parameters
+    type: "event"
+    # The following is required and specifies when this event should be "sent",
+    # metrics without this field ARE NOT WRITTEN to logs.
+    # "metrics" is the default.
+    send_in_pings:
+      - "metrics"
+    description: >
+      Look, they did a thing!
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    # supposedly optional values:
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  first_string:
+    type: "string"
+    send_in_pings:
+      - "metrics"
+    description: >
+      max 255 octet string value (Use `text` if this is too small)
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  second_string:
+    type: "string"
+    send_in_pings:
+      - "metrics"
+    description: >
+      max 255 octet string value (Use `text` if this is too small)
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  first_quantity:
+    type: "quantity"
+    unit: "quatloos"
+    send_in_pings:
+      - "metrics"
+    description: >
+      Some quant that is worth quanting
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  # can you only have one event? Apparently so...
+  another_event:
+    # Metric Parameters
+    type: "event"
+    # The following is required and specifies when this event should be "sent",
+    # metrics without this field ARE NOT WRITTEN to logs.
+    # "metrics" is the default.
+    send_in_pings:
+      - "metrics"
+    description: >
+      Look, they did a thing!
+    metadata:
+      tags:
+        - "test"
+    expires: "never"
+    # supposedly optional values:
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  second_quantity:
+    type: "quantity"
+    unit: "quatloos"
+    send_in_pings:
+      - "metrics"
+    description: >
+      Some quant that is worth quanting
+    expires: "never"
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"

@@ -1,2 +1,22 @@
+## Describe the `pings` you're sending out.
+## This file also does double duty as the wrapper file for server metric logging.
+## The metrics for server logging are described in `metrics_server.yaml`, but are
+## limited to `event`, `string`, & `quantity`.
+
 # Schema
 $schema: moz://mozilla.org/schemas/glean/pings/1-0-0
+
+# There are no groups, well, technically, this is the group. It's
+# limited to alphanum.
+autotrack:
+  bugs:
+    - "https://evilonastick.com/bugs/"
+  data_reviews:
+    - "https://evilonastick.com/reviews/"
+  notification_emails:
+    - "alert+ignore@evilonastick.com"
+  description: "Test server side metrics for the crappy demo app"
+  # Presumptive that this includes the individual client_id (default: False)
+  # (see https://mozilla.github.io/glean/book/user/pings/index.html#the-client_info-section)
+  # I _think_ this is irrelevant for us.
+  include_client_id: false

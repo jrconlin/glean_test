@@ -6,7 +6,7 @@ $tags:
   - "backend"
 
 # Category
-autotrack.fafo:
+autotrack:
 
   # Name (I am using the type as the name because I'm lazy. The linter complains if all
   # of the various metrics begin with the same string.)
