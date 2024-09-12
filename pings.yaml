@@ -6,6 +6,13 @@
 # Schema
 $schema: moz://mozilla.org/schemas/glean/pings/1-0-0
 
+# Each group defines a discrete logging event. `event` and the field types
+# in `metrics_server.yaml` are associated with these, and discrete Loggers
+# are built for each.
+# NOTE: A potentially empty `metrics` group will always be built since that's
+# the default. It depends on if any of the `event` or field types specified indicate
+# if they're included in the default `metrics` ping.
+
 # There are no groups, well, technically, this is the group. It's
 # limited to alphanum.
 autotrack:
@@ -19,4 +26,14 @@ autotrack:
   # Presumptive that this includes the individual client_id (default: False)
   # (see https://mozilla.github.io/glean/book/user/pings/index.html#the-client_info-section)
   # I _think_ this is irrelevant for us.
+  include_client_id: false
+
+autotrack2:
+  bugs:
+    - "https://evilonastick.com/bugs/"
+  data_reviews:
+    - "https://evilonastick.com/reviews/"
+  notification_emails:
+    - "alert+ignore@evilonastick.com"
+  description: "Test server side metrics for the crappy demo app"
   include_client_id: false

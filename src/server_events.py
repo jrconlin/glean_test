@@ -15,12 +15,12 @@ import json
 GLEAN_EVENT_MOZLOG_TYPE = "glean-server-event"
 
 
-class MetricsServerEventLogger:
+class Autotrack2ServerEventLogger:
     def __init__(
         self, application_id: str, app_display_version: str, channel: str
     ) -> None:
         """
-        Create MetricsServerEventLogger instance.
+        Create Autotrack2ServerEventLogger instance.
 
         :param str application_id: The application ID.
         :param str app_display_version: The application display version.
@@ -34,9 +34,7 @@ class MetricsServerEventLogger:
         self,
         user_agent: str,
         ip_address: str,
-        autotrack_first_quantity: int,
         autotrack_second_quantity: int,
-        autotrack_first_string: str,
         autotrack_second_string: str,
         event: dict[str, Any]
     ) -> None:
@@ -46,11 +44,9 @@ class MetricsServerEventLogger:
         event_payload = {
             "metrics": {
                 "quantity": {
-                    "autotrack.first_quantity": autotrack_first_quantity,
                     "autotrack.second_quantity": autotrack_second_quantity,
                 },
                 "string": {
-                    "autotrack.first_string": autotrack_first_string,
                     "autotrack.second_string": autotrack_second_string,
                 },
             },
@@ -80,7 +76,7 @@ class MetricsServerEventLogger:
         # https://github.com/mozilla/gcp-ingestion/pull/2400
         ping = {
             "document_namespace": self._application_id,
-            "document_type": "metrics",
+            "document_type": "autotrack2",
             "document_version": "1",
             "document_id": str(uuid4()),
             "user_agent": user_agent,
@@ -110,9 +106,7 @@ class MetricsServerEventLogger:
         self,
         user_agent: str,
         ip_address: str,
-        autotrack_first_quantity: int,
         autotrack_second_quantity: int,
-        autotrack_first_string: str,
         autotrack_second_string: str,
     ) -> None:
         """
@@ -123,9 +117,7 @@ class MetricsServerEventLogger:
         :param str user_agent: The user agent.
         :param str ip_address: The IP address. Will be used to decode Geo information
             and scrubbed at ingestion.
-        :param int autotrack_first_quantity: Some quant that is worth quanting
         :param int autotrack_second_quantity: Some quant that is worth quanting
-        :param str autotrack_first_string: max 255 octet string value (Use `text` if this is too small)
         :param str autotrack_second_string: max 255 octet string value (Use `text` if this is too small)
         """
         event = {
@@ -135,20 +127,103 @@ class MetricsServerEventLogger:
         self._record(
             user_agent,
             ip_address,
-            autotrack_first_quantity,
             autotrack_second_quantity,
-            autotrack_first_string,
             autotrack_second_string,
             event
         )
+class AutotrackServerEventLogger:
+    def __init__(
+        self, application_id: str, app_display_version: str, channel: str
+    ) -> None:
+        """
+        Create AutotrackServerEventLogger instance.
+
+        :param str application_id: The application ID.
+        :param str app_display_version: The application display version.
+        :param str channel: The channel.
+        """
+        self._application_id = application_id
+        self._app_display_version = app_display_version
+        self._channel = channel
+
+    def _record(
+        self,
+        user_agent: str,
+        ip_address: str,
+        autotrack_first_quantity: int,
+        autotrack_first_string: str,
+        event: dict[str, Any]
+    ) -> None:
+        now = datetime.now(timezone.utc)
+        timestamp = now.isoformat()
+        event["timestamp"] = int(1000.0 * now.timestamp())  # Milliseconds since epoch
+        event_payload = {
+            "metrics": {
+                "quantity": {
+                    "autotrack.first_quantity": autotrack_first_quantity,
+                },
+                "string": {
+                    "autotrack.first_string": autotrack_first_string,
+                },
+            },
+            "events": [event],
+            "ping_info": {
+                # seq is required in the Glean schema, however is not useful in server context
+                "seq": 0,
+                "start_time": timestamp,
+                "end_time": timestamp,
+            },
+            # `Unknown` fields below are required in the Glean schema, however they are
+            # not useful in server context
+            "client_info": {
+                "telemetry_sdk_build": "glean_parser v15.0.1",
+                "first_run_date": "Unknown",
+                "os": "Unknown",
+                "os_version": "Unknown",
+                "architecture": "Unknown",
+                "app_build": "Unknown",
+                "app_display_version": self._app_display_version,
+                "app_channel": self._channel,
+            },
+        }
+        event_payload_serialized = json.dumps(event_payload)
+
+        # This is the message structure that Decoder expects:
+        # https://github.com/mozilla/gcp-ingestion/pull/2400
+        ping = {
+            "document_namespace": self._application_id,
+            "document_type": "autotrack",
+            "document_version": "1",
+            "document_id": str(uuid4()),
+            "user_agent": user_agent,
+            "ip_address": ip_address,
+            "payload": event_payload_serialized,
+        }
+
+
+        self.emit_record(now, ping)
+
+    def emit_record(self, now: datetime, ping:dict[str, Any]) -> None:
+        """Log the ping to STDOUT.
+        Applications might want to override this method to use their own logging.
+        If doing so, make sure to log the ping as JSON, and to include the
+        `Type: GLEAN_EVENT_MOZLOG_TYPE`."""
+        ping_envelope = {
+            "Timestamp": now.isoformat(),
+            "Logger": "glean",
+            "Type": GLEAN_EVENT_MOZLOG_TYPE,
+            "Fields": ping,
+        }
+        ping_envelope_serialized = json.dumps(ping_envelope)
+
+        print(ping_envelope_serialized)
+
     def record_autotrack_some_event(
         self,
         user_agent: str,
         ip_address: str,
         autotrack_first_quantity: int,
-        autotrack_second_quantity: int,
         autotrack_first_string: str,
-        autotrack_second_string: str,
     ) -> None:
         """
         Record and submit a autotrack_some_event event:
@@ -159,9 +234,7 @@ class MetricsServerEventLogger:
         :param str ip_address: The IP address. Will be used to decode Geo information
             and scrubbed at ingestion.
         :param int autotrack_first_quantity: Some quant that is worth quanting
-        :param int autotrack_second_quantity: Some quant that is worth quanting
         :param str autotrack_first_string: max 255 octet string value (Use `text` if this is too small)
-        :param str autotrack_second_string: max 255 octet string value (Use `text` if this is too small)
         """
         event = {
             "category": "autotrack",
@@ -171,24 +244,37 @@ class MetricsServerEventLogger:
             user_agent,
             ip_address,
             autotrack_first_quantity,
-            autotrack_second_quantity,
             autotrack_first_string,
-            autotrack_second_string,
             event
         )
 
-def create_metrics_server_event_logger(
+def create_autotrack2_server_event_logger(
     application_id: str,
     app_display_version: str,
     channel: str,
-) -> MetricsServerEventLogger:
+) -> Autotrack2ServerEventLogger:
     """
     Factory function that creates an instance of Glean Server Event Logger to record
-    `metrics` ping events.
+    `autotrack2` ping events.
     :param str application_id: The application ID.
     :param str app_display_version: The application display version.
     :param str channel: The channel.
-    :return: An instance of MetricsServerEventLogger.
-    :rtype: MetricsServerEventLogger
+    :return: An instance of Autotrack2ServerEventLogger.
+    :rtype: Autotrack2ServerEventLogger
     """
-    return MetricsServerEventLogger(application_id, app_display_version, channel)
+    return Autotrack2ServerEventLogger(application_id, app_display_version, channel)
+def create_autotrack_server_event_logger(
+    application_id: str,
+    app_display_version: str,
+    channel: str,
+) -> AutotrackServerEventLogger:
+    """
+    Factory function that creates an instance of Glean Server Event Logger to record
+    `autotrack` ping events.
+    :param str application_id: The application ID.
+    :param str app_display_version: The application display version.
+    :param str channel: The channel.
+    :return: An instance of AutotrackServerEventLogger.
+    :rtype: AutotrackServerEventLogger
+    """
+    return AutotrackServerEventLogger(application_id, app_display_version, channel)

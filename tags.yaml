@@ -3,6 +3,8 @@ $schema: moz://mozilla.org/schemas/glean/tags/1-0-0
 
 # Tags must be defined here and include a description.
 # These tags are then used in metrics.yaml for whatever tagging reasons.
+# NOTE: Tags do not appear to be included in any server log / ping configuration.
+
 
 test:
   description: "Testy tag is testy"

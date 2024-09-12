@@ -25,16 +25,17 @@ autotrack:
     type: "event"
     # The following is required and specifies when this event should be "sent",
     # metrics without this field ARE NOT WRITTEN to logs.
-    # "metrics" is the default.
+    # "metrics" is the default, but can include any of the `Category` specified.
+    # (e.g. in this file `some_event` and `another_event`)
     send_in_pings:
-      - "metrics"
+      - "autotrack"
     description: >
       Look, they did a thing!
-    metadata:
-      tags:
-        - "test"
+    # metadata tags do not seem to be used for ping / logs.
+    #metadata:
+    #  tags:
+    #    - "test"
     expires: "never"
-    # supposedly optional values:
     bugs:
       - "https://evilonastick.com/bugs/"
     data_reviews:
@@ -45,21 +46,7 @@ autotrack:
   first_string:
     type: "string"
     send_in_pings:
-      - "metrics"
-    description: >
-      max 255 octet string value (Use `text` if this is too small)
-    expires: "never"
-    bugs:
-      - "https://evilonastick.com/bugs/"
-    data_reviews:
-      - "https://evilonastick.com/reviews/"
-    notification_emails:
-      - "alert+ignore@evilonastick.com"
-
-  second_string:
-    type: "string"
-    send_in_pings:
-      - "metrics"
+      - "autotrack"
     description: >
       max 255 octet string value (Use `text` if this is too small)
     expires: "never"
@@ -74,7 +61,7 @@ autotrack:
     type: "quantity"
     unit: "quatloos"
     send_in_pings:
-      - "metrics"
+      - "autotrack"
     description: >
       Some quant that is worth quanting
     expires: "never"
@@ -85,22 +72,36 @@ autotrack:
     notification_emails:
       - "alert+ignore@evilonastick.com"
 
-  # can you only have one event? Apparently so...
   another_event:
     # Metric Parameters
     type: "event"
     # The following is required and specifies when this event should be "sent",
     # metrics without this field ARE NOT WRITTEN to logs.
-    # "metrics" is the default.
+    # "metrics" is the default, but you can specify any group defined in the `pings.yaml`
+    # file.
     send_in_pings:
-      - "metrics"
+      - "autotrack2"
     description: >
       Look, they did a thing!
-    metadata:
-      tags:
-        - "test"
+    # metadata:
+    #   tags:
+    #     - "test"
     expires: "never"
     # supposedly optional values:
+    bugs:
+      - "https://evilonastick.com/bugs/"
+    data_reviews:
+      - "https://evilonastick.com/reviews/"
+    notification_emails:
+      - "alert+ignore@evilonastick.com"
+
+  second_string:
+    type: "string"
+    send_in_pings:
+      - "autotrack2"
+    description: >
+      max 255 octet string value (Use `text` if this is too small)
+    expires: "never"
     bugs:
       - "https://evilonastick.com/bugs/"
     data_reviews:
@@ -112,10 +113,11 @@ autotrack:
     type: "quantity"
     unit: "quatloos"
     send_in_pings:
-      - "metrics"
+      - "autotrack2"
     description: >
       Some quant that is worth quanting
     expires: "never"
+    lifetime: "ping"
     bugs:
       - "https://evilonastick.com/bugs/"
     data_reviews:
