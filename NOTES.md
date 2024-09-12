@@ -30,7 +30,7 @@ _*NOTE*_: the `event` type is currently broken in glean_parser 15.0.0. See https
 * I am NOT a fan of pointing directly to the glean repo for `glean-build`. Should we vendor that?
 
 ### Server side stuff
-git 
+git
 Glean would much prefer to scan your logs looking for glean records.
 
 Glean log records are a JSON blob that is a single line entry that contains some envelope data along with the defined fields.
